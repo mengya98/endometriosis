@@ -28,110 +28,11 @@ epi$celltype[epi$phase%in%c('early_secretory','mid_secretory')]<-'Glandular secr
 epi$celltype[epi$origin%in%c('Ectopic')]<-'NNMT+'
 epi$celltype[epi$seurat_clusters%in%c(3)]<-'Ciliated'
 
-#F2A epi QC#
-col<-rev(c("#97d35b",#P2
-            "#eddb1a",#P17
-            "#6b5ee0",#P19
-            "#ed7647",#P28
-            "#80e5b6",#P14
-            "#a2bcf2",#P16
-            "#d8589f",#P27
-            "#91c3d8",#P29
-            "#7ec635",#P38
-            "#f9c7b1",#P3
-            "#5bc8cc",#P11
-            "#210b66",#P15
-            "#ba2337",#P21
-            "#a1a5e0",#P23
-            "#c16d30",#P34
-            "#8473f4",#P40
-            "#c4751b",#P12
-            "#2eccb1",#P18
-            "#40a9d6",#P31
-            "#74e072",#P35
-            "#83d8db"))#P36
-
-epi<-subset(epi,patient%in%c('P2','P17','P19','P28','P14','P16','P27','P29','P38','P3','P11','P15','P21','P23','P34','P40','P12','P18','P31','P35','P36'))
-
-epi$patient<-factor(epi$patient,levels = rev(c('P2','P17','P19','P28','P14','P16','P27','P29','P38','P3','P11','P15','P21','P23','P34','P40','P12','P18','P31','P35','P36')))
-meta2<-data.frame(epi@meta.data)
-meta2$patient<-factor(meta2$patient,levels = rev(c('P2','P17','P19','P28','P14','P16','P27','P29','P38','P3','P11','P15','P21','P23','P34','P40','P12','P18','P31','P35','P36')))
-t1<-VlnPlot(object = epi, features = c("nFeature_RNA"),group.by = 'patient',pt.size = 0)+
-  theme(axis.title.y = element_blank(),axis.ticks.y = element_blank(),axis.text.y = element_blank())+
-  theme(legend.position="none")+
-  scale_fill_manual(values = col)+
-  scale_y_log10()+
-  coord_flip()
-t2<-VlnPlot(object = epi, features = c("nCount_RNA"),group.by = 'patient',pt.size = 0)+
-  theme(axis.title.y = element_blank(),axis.ticks.y = element_blank(),axis.text.y = element_blank())+
-  theme(legend.position="none")+
-  scale_fill_manual(values = col)+
-  scale_y_log10()+
-  coord_flip()
-epi_cellnumber<-data.frame(number=summary(meta2$patient))
-epi_cellnumber$patient<-rownames(epi_cellnumber)
-epi_cellnumber$patient<-factor(epi_cellnumber$patient,levels = rev(c('P2','P17','P19','P28','P14','P16','P27','P29','P38','P3','P11','P15','P21','P23','P34','P40','P12','P18','P31','P35','P36')))
-t3<-ggplot(epi_cellnumber, aes(x = patient,y=number,fill=patient))+
-  geom_col(aes(fill=patient),color='black')+
-  scale_fill_manual(values = col)+
-  theme_classic()+
-  theme(legend.position="none")+
-  labs(x='',y='Cell number')+
-  theme(axis.text = element_text(color='black'),axis.ticks = element_line(color='black'))+
-  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1))+coord_flip()+
-  scale_x_discrete(position = "top")+
-  scale_y_reverse()
-meta2$origin<-factor(meta2$origin,levels = c('Normal','Eutopic','Ectopic'))
-origin_cellnumber_new<-data.frame(number=summary(meta2$origin))
-origin_cellnumber_new$origin<-rownames(origin_cellnumber_new)
-origin_cellnumber_new$origin<-factor(origin_cellnumber_new$origin,levels = rev(c('Normal','Eutopic','Ectopic')))
-t5<-ggplot(origin_cellnumber_new, aes(x = origin,y=number,fill=origin))+
-  geom_col(aes(fill=origin),width = 0.6,color='black')+
-  scale_fill_manual(values = pal_simpsons()(14)[c(4,13,7)])+
-  theme_classic()+
-  theme(legend.position="none")+
-  labs(x='',y='Cell number')+
-  theme(axis.text = element_text(color='black'),axis.ticks = element_line(color='black'))+
-  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1))+coord_flip()#+
-epi$origin<-factor(epi$origin,levels = rev(c('Normal','Eutopic','Ectopic')))
-t6<-VlnPlot(object = epi, features = c("nFeature_RNA"),group.by = 'origin',pt.size = 0)+
-  scale_fill_manual(values = pal_simpsons()(14)[c(4,13,7)])+
-  theme(axis.title.y = element_blank(),axis.ticks.y = element_blank(),axis.text.y = element_blank())+
-  theme(legend.position="none")+
-  scale_y_log10()+
-  coord_flip()
-t7<-VlnPlot(object = epi, features = c("nCount_RNA"),group.by = 'origin',pt.size = 0)+
-  theme(axis.title.y = element_blank(),axis.ticks.y = element_blank(),axis.text.y = element_blank())+
-  theme(legend.position="none")+
-  scale_fill_manual(values = pal_simpsons()(14)[c(4,13,7)])+
-  scale_y_log10()+
-  coord_flip()
-
-epi$patient<-factor(epi$patient,levels = (c('P2','P17','P19','P28','P14','P16','P27','P29','P38','P3','P11','P15','P21','P23','P34','P40','P12','P18','P31','P35','P36')))
-meta2<-data.frame(epi@meta.data)
-sankey2<-meta2[,c(5,8)]
-
-sankey2<-group_by(sankey2, patient,origin) %>% summarise(., count = n())
-sankey2$patient<-factor(sankey2$patient,levels = (c('P2','P17','P19','P28','P14','P16','P27','P29','P38','P3','P11','P15','P21','P23','P34','P40','P12','P18','P31','P35','P36')))
-t4<-ggplot(data = sankey2,aes(axis1 = patient, axis2 = origin,y = count,label=F))+
-  scale_x_discrete(limits = c("patient", "origin"), expand = c(.1, .05)) +#
-  geom_alluvium(aes(fill = patient),width = 1/8,color='black') +
-  geom_stratum(width = 1/8,size=0.1) + 
-  scale_fill_manual(values = rev(col))+
-  theme_minimal() +
-  theme(panel.border = element_blank(),panel.grid=element_blank(), panel.grid.major=element_blank(),panel.background=element_blank())+
-  theme(axis.text.y = element_blank(),axis.title.y = element_blank())+
-  theme(legend.position="none")+
-  ggtitle("Patient ID -> Locations")
 
 
-pdf('F2A, epi_QCplot.pdf',width=16,height=6)
-t2+t1+t3+t4+t5+t6+t7+plot_layout(widths = c(1,1,1,4,1,1,1),ncol = 7)
-dev.off()
-
-#F2B epi celltype#
+#F2A epi celltype#
 epi$celltype<-factor(epi$celltype,levels = c('Ciliated','Glandular proliferative','Glandular secretory','NNMT+'))
-pdf('F2B, epi_celltype.pdf',width=6.6,height=5)
+pdf('F2A, epi_celltype.pdf',width=6.6,height=5)
 DimPlot(epi, reduction = "umap", group.by = 'celltype',pt.size = 1,label = F,
         cols = c('#7876B1FF','#CD9B1D',pal_simpsons()(5)[c(2,5)]))+
   theme_bw()+
@@ -140,9 +41,9 @@ DimPlot(epi, reduction = "umap", group.by = 'celltype',pt.size = 1,label = F,
   theme(panel.grid=element_blank(), panel.background=element_rect(color="black", fill="transparent"))
 dev.off()
 
-#F2C epi celltype dotplot#
+#F2B epi celltype dotplot#
 epi$celltype<-factor(epi$celltype,levels = rev(c('Ciliated','Glandular proliferative','Glandular secretory','NNMT')))
-pdf('F2C, epi_dotplot.pdf',width=9,height=3)
+pdf('F2B, epi_dotplot.pdf',width=9,height=3)
 DotPlot(epi,features = c('PIFO','FOXJ1','AGR3','SPAG17','SNTN',
                          'MMP7','IHH','EMID1','NPAS3','CPM',
                          'MT1E','SPP1','C2CD4A','PAEP','CXCL14',
@@ -153,8 +54,8 @@ DotPlot(epi,features = c('PIFO','FOXJ1','AGR3','SPAG17','SNTN',
   theme(axis.text.x = element_text(angle=90,vjust = 0.5,hjust = 1))
 dev.off()
 
-#F2D epi tissue types#
-pdf('F2D, EPI_tissue types.pdf',width=4.8,height=4)
+#F2C epi tissue types#
+pdf('F2C, EPI_tissue types.pdf',width=4.8,height=4)
 epi$origin<-factor(epi$origin,levels = c('Normal','Eutopic','Ectopic'))
 DimPlot(epi, reduction = "umap", pt.size = 1, group.by = 'origin',label = F,
         cols = pal_simpsons()(14)[c(7,13,4)])+
@@ -164,7 +65,7 @@ DimPlot(epi, reduction = "umap", pt.size = 1, group.by = 'origin',label = F,
   theme(axis.text= element_blank(), axis.ticks=element_blank())
 dev.off()
 
-#F2E#
+#F2D#
 meta<-data.frame(epi@meta.data)
 pro_EU_N<-rownames(meta[meta$origin=='Normal' & meta$celltype%in%c('Glandular proliferative'),])
 pro_EU_P<-rownames(meta[meta$origin=='Eutopic' & meta$celltype%in%c('Glandular proliferative'),])
@@ -186,7 +87,7 @@ for (i in 1:nrow(volcano_pro)) {
   }
 }
 
-pdf("F2E, volcano_pro_PvsN_DEGs.pdf",width=4,height=4)
+pdf("F2D, volcano_pro_PvsN_DEGs.pdf",width=4,height=4)
 ggplot(volcano_pro,aes(x=avg_log2FC,y=-log10(p_val_adj),color=label_genes_sig,size=label_genes_sig))+geom_point()+
   theme_classic()+
   labs(x = 'log2(FoldChange)', y = '-log10(FDR)', title = "Volcano plot based on DEGs between EU and N")+
@@ -207,7 +108,7 @@ ggplot(volcano_pro,aes(x=avg_log2FC,y=-log10(p_val_adj),color=label_genes_sig,si
   theme(legend.position = 'none')
 dev.off() 
 
-#F2F-F2I#
+#F2E-F2H#
 data <- as(as.matrix(epi@assays$RNA@counts), 'sparseMatrix')
 pd <- new('AnnotatedDataFrame', data = epi@meta.data)
 fData <- data.frame(gene_short_name = row.names(data), row.names = row.names(data))
@@ -229,18 +130,18 @@ cds <- orderCells(cds)
 plot_cell_trajectory(cds, color_by = "State")
 cds <- orderCells(cds, root_state = 2)
 
-#F2F#
-pdf("F2F, trainmonocle_celltype.pdf",width =4.5,height = 5)
+#F2E#
+pdf("F2E, trainmonocle_celltype.pdf",width =4.5,height = 5)
 plot_cell_trajectory(cds_1, color_by = "celltype", cell_size = 1,show_backbone=TRUE)+
   scale_color_manual(values=c('#7876B1FF','#CD9B1D',pal_simpsons()(5)[c(2)]))
 dev.off()
-#F2G#
-pdf("F2G, trainmonocle_origin.pdf",width = 4.5,height = 5)
+#F2F#
+pdf("F2F, trainmonocle_origin.pdf",width = 4.5,height = 5)
 plot_cell_trajectory(cds_1, color_by = "origin", cell_size = 1,show_backbone=T)+
   scale_color_manual(values=c(pal_simpsons()(14)[c(7,13,4)]))
 dev.off()
-#F2H#
-pdf("F2H, trainmonocle_Pseudotime.pdf",width = 4.3,height = 5)
+#F2G#
+pdf("F2G, trainmonocle_Pseudotime.pdf",width = 4.3,height = 5)
 plot_cell_trajectory(cds_1, color_by = "Pseudotime", cell_size = 1,show_backbone=TRUE)+
   scale_colour_gradientn(colours = c("#9E0142","#D53E4F","#F46D43",'orange',"#FDAE61","#FEE08B","#E6F598","#BABABA","#878787","#4D4D4D","#1A1A1A"),
                          values = c(1.0,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1,0))
@@ -280,8 +181,7 @@ p4<-plot_cell_trajectory(cds, color_by = "RSPH1", cell_size = 1,show_backbone=T)
   theme(axis.line.y = element_blank(),axis.text.y = element_blank(), axis.ticks.y = element_blank(),axis.title.y = element_blank())+
   theme(legend.position="none")
 
-#F2I#
-pdf("F2I, trainmonocle_ciliagenes.pdf",width = 8.5,height = 10)
+#F2H#
+pdf("F2H, trainmonocle_ciliagenes.pdf",width = 8.5,height = 10)
 patchwork::wrap_plots(p1,p2,p3,p4,ncol = 2)
 dev.off()
-
