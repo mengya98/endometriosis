@@ -115,3 +115,7 @@ remove(epi_includeCilia)
 tcell<-subset(all,cell_type=='T cells')
 saveRDS(tcell,'G:/endometriosis/Analysis/T/tcell.rds')
 remove(tcell)
+
+str<-subset(all,cell_type=='Stromal fibroblasts')
+saveRDS(str,'G:/endometriosis/Analysis/STR/str.rds')
+remove(str)
