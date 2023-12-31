@@ -9,7 +9,7 @@ library(ggsci)
 epi<-readRDS('./epi.rds')
 meta<-data.frame(epi@meta.data)
 
-#S4A Volcano plot based on P15 P23 P36#
+#F4A Volcano plot based on P15 P23 P36#
 P15_P23_EC<-rownames(meta[meta$patient%in%c('P15','P23') & meta$origin%in%c('Ectopic'),])
 P15_P23_EU<-rownames(meta[meta$patient%in%c('P15','P23') & meta$origin%in%c('Eutopic'),])
 P36_EC<-rownames(meta[meta$patient=='P36' & meta$origin%in%c('Ectopic'),])
@@ -23,8 +23,7 @@ P15P23_P36_ECvsEU<-merge(P15_P23_ECvsEU,P36_ECvsEU,by = 'gene')
 P15P23_P36_ECvsEU<-P15P23_P36_ECvsEU[,c(1,3,8)]
 colnames(P15P23_P36_ECvsEU)<-c('gene','Proliferative','Secretory')
 
-label_genes<-unique(c('LAMB3','LAMA4','SPARC','NRP1','NNMT','RDH10','STRA6',
-                      'MGP','RARRES1','RUNX3','CYP1B1','RBP1','PGR','FHL2'))
+label_genes<-unique(c('NNMT','CASP6'))
 P15P23_P36_ECvsEU$label_genes<-''
 P15P23_P36_ECvsEU$label_genes_sig<-''
 P15P23_P36_ECvsEU$label_genes_sig<-'con'
