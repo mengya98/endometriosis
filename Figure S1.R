@@ -9,15 +9,50 @@ library(ggsci)
 
 all<-readRDS('all_seurat.rds')
 
-col<-randomColor(34)
-#EV1A QC#
+#col<-randomColor(34)
+col<-rev(c("#97d35b",#P2
+           "#0e51d6",#P9
+           "#eddb1a",#P17
+           "#6b5ee0",#P19
+           "#fcc2f1",#P25
+           "#ed7647",#P28
+           "#80e5b6",#P14
+           "#a2bcf2",#P16
+           "#d8589f",#P27
+           "#91c3d8",#P29
+           "#7ec635",#P38
+           "#89b4e5",#P1
+           "#40a9d6",#P31
+           "#74e072",#P35
+           "#f9c7b1",#P3
+           "#edb39c",#P7
+           "#5bc8cc",#P11
+           "#210b66",#P15
+           "#db3262",#P20
+           "#ba2337",#P21
+           "#a1a5e0",#P23
+           "#95a6f4",#P30
+           "#c16d30",#P34
+           "#8473f4",#P40
+           "#c4751b",#P12
+           "#2eccb1",#P18
+           "#5bef58",#P26
+           "#edb0a1",#P32
+           "#83d8db",#P36
+           "#c69c29",#P8
+           "#f7c309",#P10
+           "#d374e0",#P22
+           "#167f0c",#P24
+           "#91f97f"))#P33
+
+#Figure S1A QC#
 all$patient<-factor(all$patient,levels = rev(c('P2','P9','P17','P19','P25','P28','P14','P16','P27','P29','P38',
-                                                       'P1','P31','P35',
-                                                       'P3','P7','P11','P15','P20','P21','P23','P30','P34','P40','P12','P18','P26','P32','P36',
-                                                       'P8','P10','P22','P24','P33')))
+                                               'P1','P31','P35',
+                                               'P3','P7','P11','P15','P20','P21','P23','P30','P34','P40','P12','P18','P26','P32','P36',
+                                               'P8','P10','P22','P24','P33')))
 meta2<-data.frame(all@meta.data)
 meta2$patient<-factor(meta2$patient,levels = rev(c('P2','P9','P17','P19','P25','P28','P14','P16','P27','P29','P38','P1','P31','P35','P3','P7','P11','P15','P20','P21','P23','P30','P34','P40','P12','P18','P26','P32','P36','P8','P10','P22','P24','P33')))
-pdf('./ÎÄÕÂÍ¼/all_p1_p40_patient_UMI_genes_cellcount.pdf',width=5,height=4)
+
 t1<-VlnPlot(object = all, features = c("nFeature_RNA"),group.by = 'patient',pt.size = 0)+
   theme(axis.title.y = element_blank(),axis.ticks.y = element_blank(),axis.text.y = element_blank())+
   theme(legend.position="none")+
@@ -69,7 +104,6 @@ t7<-VlnPlot(object = all, features = c("nCount_RNA"),group.by = 'origin',pt.size
   scale_fill_manual(values = pal_simpsons()(14)[c(4,13,7)])+
   scale_y_log10()+
   coord_flip()
-
 ##sankey#
 all$patient<-factor(all$patient,levels = (c('P2','P9','P17','P19','P25','P28','P14','P16','P27','P29','P38','P1','P31','P35','P3','P7','P11','P15','P20','P21','P23','P30','P34','P40','P12','P18','P26','P32','P36','P8','P10','P22','P24','P33')))
 all$origin<-factor(all$origin,levels = (c('Normal','Eutopic','Ectopic')))
@@ -87,8 +121,7 @@ t4<-ggplot(data = sankey2,aes(axis1 = patient, axis2 = origin,y = count,label=F)
   theme(legend.position="none")+
   ggtitle("Participant ID->Tissue type")
 
-
-pdf('EV1A, all_QCplot.pdf',width=16,height=5)
+pdf('Figure S1A, all_QCplot.pdf',width=16,height=5)
 t2+t1+t3+t4+t5+t6+t7+plot_layout(widths = c(1,1,1,3,1,1,1),ncol = 7)
 dev.off()
 
@@ -104,11 +137,11 @@ write.table(top500.markers,file = "./DEG/p1_p40_celltype_top500markers.xls", row
 all.markers_order_positive %>% group_by(cluster) %>% top_n(n = 50, wt = avg_log2FC)-> top50.markers
 write.table(top50.markers,file = "./DEG/p1_p40_celltype_top50markers.xls", row.names = F, col.names = T, quote = F, sep = "\t")
 
-#EV1B###GO terms##
+#Figure S1B###GO terms##
 epi_GO<-read_xlsx('./GEO/EPI_GO.xlsx',sheet = 2)
 epi_GO<-epi_GO[c(1,3,22,58,162,242,202,141),]
 epi_GO$Description<-factor(epi_GO$Description,levels = rev(epi_GO$Description))
-pdf("EV1B, EPI_top500DEGs_GOterms.pdf",width = 6.9,height = 4)
+pdf("Figure S1B, EPI_top500DEGs_GOterms.pdf",width = 6.9,height = 4)
 ggplot(epi_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   coord_flip()+theme_classic()+
   geom_bar(stat="identity",width=0.8,fill="#91331FFF")+
@@ -122,7 +155,7 @@ dev.off()
 str_GO<-read_xlsx('./GEO/STR_GO.xlsx',sheet = 2)
 str_GO<-str_GO[c(6,13,29,34,61,159,196,218),]
 str_GO$Description<-factor(str_GO$Description,levels = rev(str_GO$Description))
-pdf("EV1B, STR_top500DEGs_GOterms.pdf",width = 6.4,height = 4)
+pdf("Figure S1B, STR_top500DEGs_GOterms.pdf",width = 6.4,height = 4)
 ggplot(str_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   coord_flip()+theme_classic()+
   geom_bar(stat="identity",width=0.8,fill="#709AE1FF")+
@@ -136,7 +169,7 @@ dev.off()
 T_GO<-read_xlsx('./GEO/T_GO.xlsx',sheet = 2)
 T_GO<-T_GO[c(1,14,49,84,165,178,450,464),]
 T_GO$Description<-factor(T_GO$Description,levels = rev(T_GO$Description))
-pdf("EV1B, T_top500DEGs_GOterms.pdf",width = 7.0,height = 4)
+pdf("Figure S1B, T_top500DEGs_GOterms.pdf",width = 7.0,height = 4)
 ggplot(T_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   coord_flip()+theme_classic()+
   geom_bar(stat="identity",width=0.8,fill="#7876B1FF")+
@@ -150,7 +183,7 @@ dev.off()
 mac_GO<-read_xlsx('./GEO/Macro_GO.xlsx',sheet = 2)
 mac_GO<-mac_GO[c(3,57,65,95,111,185,218,272),]
 mac_GO$Description<-factor(mac_GO$Description,levels = rev(mac_GO$Description))
-pdf("EV1B, Mac_top500DEGs_GOterms.pdf",width = 7,height = 4)
+pdf("Figure S1B, Mac_top500DEGs_GOterms.pdf",width = 7,height = 4)
 ggplot(mac_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   coord_flip()+theme_classic()+
   geom_bar(stat="identity",width=0.8,fill="#71D0F5FF")+
@@ -164,7 +197,7 @@ dev.off()
 nk_GO<-read_xlsx('./GEO/NK_GO.xlsx',sheet = 2)
 nk_GO<-nk_GO[c(1,17,21,66,76,87,169,171),]
 nk_GO$Description<-factor(nk_GO$Description,levels = rev(nk_GO$Description))
-pdf("EV1B, NK_top500DEGs_GOterms.pdf",width = 7.1,height = 4)
+pdf("Figure S1B, NK_top500DEGs_GOterms.pdf",width = 7.1,height = 4)
 ggplot(nk_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   coord_flip()+theme_classic()+
   geom_bar(stat="identity",width=0.8,fill="#8A9197FF")+
@@ -178,7 +211,7 @@ dev.off()
 endo_GO<-read_xlsx('./GEO/Endo_GO.xlsx',sheet = 2)
 endo_GO<-endo_GO[c(1,7,24,50,55,114,139,169),]
 endo_GO$Description<-factor(endo_GO$Description,levels = rev(endo_GO$Description))
-pdf("EV1B, Endo_top500DEGs_GOterms.pdf",width = 6.4,height = 4)
+pdf("Figure S1B, Endo_top500DEGs_GOterms.pdf",width = 6.4,height = 4)
 ggplot(endo_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   coord_flip()+theme_classic()+
   geom_bar(stat="identity",width=0.8,fill="#FED439FF")+
@@ -189,12 +222,11 @@ ggplot(endo_GO,aes(x=Description,y=-LogP,fill=-LogP))+
   labs(x = "",y = "-log(Pvalue)", title = "Go terms of Endothelium")
 dev.off()
 
-#EV1C#
-pdf('EV1C, all_patient.pdf',width=7.3,height=6)
+#Figure S1C#
+pdf('Figure S1C, all_patient.pdf',width=7.3,height=6)
 DimPlot(all, reduction = "umap", pt.size = 0.5, group.by = 'patient',label = F)+
   labs(x = "UMAP1", y = "UMAP2",title = '')+
   scale_color_manual(values = rev(col))+
   theme(panel.grid=element_blank(), panel.background=element_rect(color="black", fill="transparent"))+
   theme(axis.text= element_blank(), axis.ticks=element_blank())
 dev.off()
-
